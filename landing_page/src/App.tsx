@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { VerseContainer } from "./components/VerseContainer";
 import { ashSharh946 } from "./components/verseData";
+import { defaultReflectionNote } from "./components/reflectionNoteData";
 // Types & Interfaces
 
 interface Word {
@@ -352,7 +353,7 @@ export default function App(): React.JSX.Element {
     <div className="min-h-screen bg-[#fdf9ec] text-[#1c1c14] font-serif p-4 sm:p-6 md:p-10 flex flex-col items-center justify-center selection:bg-[#fedb99] selection:text-[#551d35]">
       <FontLoader />
       {/* spread operator in verseContainers works because verseDate prop names match the verseContainerProps interface */}
-      <VerseContainer {...ashSharh946} />
+      <VerseContainer {...ashSharh946} reflectionNote={defaultReflectionNote} />
 
       {/* Main Container Wrapper */}
       <div className="w-full max-w-5xl mx-auto space-y-6">

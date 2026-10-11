@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { AyahWord, type AyahWordData } from "./AyahWord";
+import { ReflectionNote, ReflectionNoteData } from "./ReflectionNote";
 
 interface VerseContainerProps {
   words: AyahWordData[];
@@ -8,7 +9,8 @@ interface VerseContainerProps {
   surahNumber: number;
   ayahNumber: number;
   translation: string;
-  initialSelectedId?: number; // 👈 Optional initial position number
+  initialSelectedId?: number;
+  reflectionNote?: ReflectionNoteData;
 }
 
 export const VerseContainer: React.FC<VerseContainerProps> = ({
@@ -19,8 +21,8 @@ export const VerseContainer: React.FC<VerseContainerProps> = ({
   ayahNumber,
   translation,
   initialSelectedId,
+  reflectionNote,
 }) => {
-  // Defaults to initialSelectedId, or the first word position (1), or 0
   const [selectedId, setSelectedId] = useState<number>(
     () => initialSelectedId ?? words[0]?.id ?? 1,
   );
@@ -69,10 +71,11 @@ export const VerseContainer: React.FC<VerseContainerProps> = ({
         </p>
       </div>
 
-      {/* Root Insight Box */}
-      {selectedWord && (
-        <div className="pt-6 border-t border-outline-variant/30">
-          <div className="max-w-md bg-surface-container-low p-6 rounded border border-outline-variant/40 flex flex-col justify-between">
+      {/* Interactive Bottom Cards Grid */}
+      <div className="pt-6 border-t border-outline-variant/30 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Left Card: Root Insight (5/12 columns on desktop) */}
+        {selectedWord && (
+          <div className="lg:col-span-5 bg-surface-container-low p-6 rounded border border-outline-variant/40 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-sans font-bold uppercase tracking-wider text-secondary">
@@ -125,12 +128,17 @@ export const VerseContainer: React.FC<VerseContainerProps> = ({
                 href="#explore"
                 className="text-primary font-medium hover:underline"
               >
-                Explore root occurrences →
+                Explore occurrences →
               </a>
             </div>
           </div>
+        )}
+
+        {/* Right Card: Personal Reflection Journal (7/12 columns on desktop) */}
+        <div className="lg:col-span-7">
+          <ReflectionNote note={reflectionNote} />
         </div>
-      )}
+      </div>
     </section>
   );
 };
