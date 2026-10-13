@@ -15,7 +15,6 @@ export default function GenderInput({ setValidGender }: GenderInputProps) {
   const options = [
     { value: "female", label: "Female" },
     { value: "male", label: "Male" },
-    { value: "prefer-not-to-say", label: "Prefer not to say" },
   ];
 
   // Sync state validity dynamically with the parent form

@@ -8,6 +8,7 @@ import GenderInput from "./GenderInput";
 import CountryInput from "./CountryInput";
 import BioInput from "./BioInput";
 import FormError from "./FormError";
+import { apiPost } from "@/lib/api";
 
 export default function SignUpForm() {
   const [validName, setValidName] = useState(false);
@@ -16,8 +17,10 @@ export default function SignUpForm() {
   const [validGender, setValidGender] = useState(false);
   const [validCountry, setValidCountry] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
 
-  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitError(null); // Reset error state on new submission attempt
 
@@ -47,16 +50,54 @@ export default function SignUpForm() {
     }
 
     const formData = new FormData(e.target as HTMLFormElement);
-    console.log("Form is valid! Submitting data...");
-    console.log("Name:", formData.get("displayName"));
-    console.log("Email:", formData.get("email"));
-    console.log("Gender:", formData.get("gender"));
-    console.log("Country:", formData.get("country"));
+    const get = (key: string) => String(formData.get(key) ?? "").trim();
 
-    // userData has props displayName,email,password,confirmPassword,gender,country,bio
-    const userData = Object.fromEntries(formData.entries());
+    // Field names match the backend's registerSchema.
+    const payload = {
+      display_name: get("displayName"),
+      email: get("email"),
+      password: String(formData.get("password") ?? ""),
+      gender: get("gender"),
+      country: get("country"),
+      bio: get("bio") || undefined,
+      language: "en",
+    };
 
-    console.log("JSON Payload:", JSON.stringify(userData, null, 2));
+    setSubmitting(true);
+    const result = await apiPost("/auth/register", payload);
+    setSubmitting(false);
+
+    if (!result.ok) {
+      setSubmitError(result.error);
+      return;
+    }
+    setRegisteredEmail(payload.email);
+  }
+
+  if (registeredEmail) {
+    return (
+      <div className="w-full max-w-md px-6 py-8 flex flex-col grow text-center">
+        <h2
+          className={`text-[#70334cFF] text-2xl ${playfair.className} font-bold`}
+        >
+          Check Your Email
+        </h2>
+        <hr className="border-none h-px bg-[linear-gradient(to_right,#EAE1E1_0%,#DBBC47_95%,#DBBC47_100%)] mt-4 w-full opacity-50" />
+        <p
+          className={`text-[#3a3030] ${inter.className} text-sm mt-6 leading-relaxed`}
+        >
+          We sent a verification link to{" "}
+          <span className="font-semibold text-[#70334c]">{registeredEmail}</span>.
+          Open it to activate your account, then sign in.
+        </p>
+        <a
+          href="/signin"
+          className={`mt-8 w-full bg-[#70334c] text-[#fefcf7] ${playfair.className} font-semibold py-3 px-4 rounded-[5px] text-lg shadow-sm`}
+        >
+          Go to Sign In
+        </a>
+      </div>
+    );
   }
 
   return (
@@ -88,9 +129,10 @@ export default function SignUpForm() {
 
         <button
           type="submit"
-          className={`w-full bg-[#70334c]/50 hover:bg-[#70334c] text-[#fefcf7] ${playfair.className} font-semibold py-3 px-4 rounded-[5px] transition-colors duration-200 text-lg shadow-sm mt-2`}
+          disabled={submitting}
+          className={`w-full bg-[#70334c]/50 hover:bg-[#70334c] disabled:opacity-60 disabled:cursor-wait text-[#fefcf7] ${playfair.className} font-semibold py-3 px-4 rounded-[5px] transition-colors duration-200 text-lg shadow-sm mt-2`}
         >
-          Create Account
+          {submitting ? "Creating Account..." : "Create Account"}
         </button>
       </form>
 

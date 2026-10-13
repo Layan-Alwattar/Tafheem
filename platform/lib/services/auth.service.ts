@@ -29,6 +29,7 @@ export async function registerUser(input: z.infer<typeof registerSchema>) {
         display_name: input.display_name,
         gender: input.gender,
         country: input.country,
+        bio: input.bio || null,
       },
     },
   });
