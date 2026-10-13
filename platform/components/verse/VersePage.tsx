@@ -1,7 +1,8 @@
+"use client";
 import React, { useState, useEffect } from "react";
-import { LiveVerse } from "./components/LiveVerse";
-import { ashSharh946 } from "./components/verseData";
-import { defaultReflectionNote } from "./components/reflectionNoteData";
+import { LiveVerse } from "./LiveVerse";
+import { ashSharh946 } from "./verseData";
+import { defaultReflectionNote } from "./reflectionNoteData";
 // Types & Interfaces
 
 interface Word {
@@ -29,23 +30,7 @@ interface VerseData {
   sampleQuote: string;
 }
 
-const FontLoader: React.FC = () => {
-  useEffect(() => {
-    const linkFonts = document.createElement("link");
-    linkFonts.href =
-      "https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap";
-    linkFonts.rel = "stylesheet";
-    document.head.appendChild(linkFonts);
-
-    const linkIcons = document.createElement("link");
-    linkIcons.href =
-      "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap";
-    linkIcons.rel = "stylesheet";
-    document.head.appendChild(linkIcons);
-  }, []);
-
-  return null;
-};
+// Fonts (Amiri, Playfair, Source Serif, Material Symbols) load in app/layout.tsx.
 const trialData = {
   id: "w3",
   arabic: "يُسْرًا",
@@ -308,7 +293,7 @@ const VERSES_DATA: VerseData[] = [
   },
 ];
 
-export default function App(): React.JSX.Element {
+export default function VersePage(): React.JSX.Element {
   const [selectedSurahIndex, setSelectedSurahIndex] = useState<number>(0);
   const currentVerse: VerseData = VERSES_DATA[selectedSurahIndex];
 
@@ -351,7 +336,6 @@ export default function App(): React.JSX.Element {
 
   return (
     <div className="min-h-screen bg-[#fdf9ec] text-[#1c1c14] font-serif p-4 sm:p-6 md:p-10 flex flex-col items-center justify-center selection:bg-[#fedb99] selection:text-[#551d35]">
-      <FontLoader />
       {/* Loads the live verse + saved reflection when signed in; sample data otherwise */}
       <LiveVerse sample={ashSharh946} sampleNote={defaultReflectionNote} />
 

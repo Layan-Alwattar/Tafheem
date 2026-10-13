@@ -3,13 +3,7 @@ import { useEffect, useState, FormEvent } from "react";
 import { inter, playfair } from "@/app/fonts";
 import EmailInput from "./EmailInput";
 import FormError from "./FormError";
-import { apiPost, READER_URL } from "@/lib/api";
-
-interface Session {
-  access_token: string;
-  refresh_token: string;
-  expires_at: number;
-}
+import { api, saveSession, type Session } from "@/lib/client/api";
 
 export default function SignInForm() {
   const [validEmail, setValidEmail] = useState(false);
@@ -37,12 +31,12 @@ export default function SignInForm() {
     const refresh_token = params.get("refresh_token");
     if (access_token && refresh_token) {
       setNotice("Your email is verified. Taking you in…");
-      const hash = new URLSearchParams({
+      saveSession({
         access_token,
         refresh_token,
-        expires_at: params.get("expires_at") ?? "",
+        expires_at: Number(params.get("expires_at")) || 0,
       });
-      window.location.replace(`${READER_URL}/#${hash}`);
+      window.location.replace("/");
     }
   }, []);
 
@@ -61,25 +55,17 @@ export default function SignInForm() {
 
     const formData = new FormData(e.target as HTMLFormElement);
     setSubmitting(true);
-    const result = await apiPost<Session>("/auth/login", {
-      email: String(formData.get("email") ?? "").trim(),
-      password,
-    });
-
-    if (!result.ok) {
+    try {
+      const session = await api<Session>("/auth/login", {
+        method: "POST",
+        body: { email: String(formData.get("email") ?? "").trim(), password },
+      });
+      saveSession(session);
+      window.location.href = "/";
+    } catch (err) {
       setSubmitting(false);
-      setSubmitError(result.error);
-      return;
+      setSubmitError((err as Error).message);
     }
-
-    // Hand the session to the verse reader via the URL fragment.
-    const { access_token, refresh_token, expires_at } = result.data;
-    const hash = new URLSearchParams({
-      access_token,
-      refresh_token,
-      expires_at: String(expires_at),
-    });
-    window.location.href = `${READER_URL}/#${hash}`;
   }
 
   return (
@@ -151,7 +137,7 @@ export default function SignInForm() {
 
       <footer className="mt-8 text-center text-sm text-gray-500">
         New to Tafheem?{" "}
-        <a href="/" className="text-[#70334cFF] font-bold hover:underline">
+        <a href="/signup" className="text-[#70334cFF] font-bold hover:underline">
           Create an account
         </a>
       </footer>

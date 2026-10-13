@@ -1,16 +1,12 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { VerseContainer } from "./VerseContainer";
 import type { AyahWordData } from "./AyahWord";
 import type { ReflectionNoteData } from "./ReflectionNote";
-import {
-  api,
-  captureSessionFromUrl,
-  isSignedIn,
-  signOut,
-  SIGNIN_URL,
-  type QuranVerse,
-  type SurahWord,
-} from "../api";
+import { api, isSignedIn, signOut } from "@/lib/client/api";
+import type { QuranVerse, WordTabs } from "@/lib/types";
+
+type SurahWord = WordTabs & { ayah_number: number };
 
 interface VerseProps {
   surah: string;
@@ -39,8 +35,7 @@ function toAyahWord(w: SurahWord): AyahWordData {
     transliteration: w.transliteration ?? undefined,
     english: w.translation_en ?? "",
     root: formatRoot(w.root),
-    rootInsight:
-      w.tabs.mufradat ?? w.tabs.lanes ?? w.tabs.morphology ?? w.part_of_speech ?? "",
+    rootInsight: w.tabs.mufradat ?? w.tabs.lanes ?? w.part_of_speech ?? "",
   };
 }
 
@@ -52,7 +47,6 @@ export const LiveVerse: React.FC<LiveVerseProps> = ({ sample, sampleNote }) => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    captureSessionFromUrl();
     if (!isSignedIn()) {
       setStatus("signed-out");
       return;
@@ -82,6 +76,7 @@ export const LiveVerse: React.FC<LiveVerseProps> = ({ sample, sampleNote }) => {
   }, [sample]);
 
   function handleSignOut() {
+    api("/auth/logout", { method: "POST" }).catch(() => undefined);
     signOut();
     setVerse(sample);
     setStatus("signed-out");
@@ -96,13 +91,18 @@ export const LiveVerse: React.FC<LiveVerseProps> = ({ sample, sampleNote }) => {
         {status === "signed-out" && (
           <>
             <span>Preview with sample data. Sign in to load the live verse and save reflections.</span>
-            <a href={SIGNIN_URL} className="font-semibold text-[#551d35] hover:underline">
-              Sign in →
-            </a>
+            <span className="flex gap-3">
+              <a href="/signin" className="font-semibold text-[#551d35] hover:underline">
+                Sign in →
+              </a>
+              <a href="/signup" className="font-semibold text-[#551d35] hover:underline">
+                Create account
+              </a>
+            </span>
           </>
         )}
         {status === "live" && <span>Live data from Tafheem</span>}
-        {status === "error" && <span className="text-[#b94a48]">Couldn't load the verse: {error}</span>}
+        {status === "error" && <span className="text-[#b94a48]">Couldn&apos;t load the verse: {error}</span>}
         {signedIn && (
           <button onClick={handleSignOut} className="font-semibold text-[#551d35] hover:underline">
             Sign out

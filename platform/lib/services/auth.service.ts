@@ -13,9 +13,9 @@ function siteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 }
 
-/** Where the "verify your email" link lands: the sign-in page of the frontend. */
+/** Where the "verify your email" link lands: this app's sign-in page. */
 function signInUrl(): string {
-  return process.env.SIGNIN_URL || `${siteUrl()}/test/login.html`;
+  return process.env.SIGNIN_URL || `${siteUrl()}/signin`;
 }
 
 /**

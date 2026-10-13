@@ -1,5 +1,7 @@
+"use client";
 import React, { useEffect, useState } from "react";
-import { api, type Reflection } from "../api";
+import { api } from "@/lib/client/api";
+import type { Reflection } from "@/lib/types";
 
 export interface ReflectionNoteData {
   initialQuote?: string;
