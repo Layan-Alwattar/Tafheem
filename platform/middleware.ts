@@ -13,8 +13,10 @@ import type { NextRequest } from "next/server";
  * to decode the base64 credentials.
  */
 export function middleware(req: NextRequest) {
-  const user = process.env.STAGING_USER;
-  const pass = process.env.STAGING_PASS;
+  // Trim so stray spaces/newlines pasted into the host's env panel don't
+  // silently make the correct password fail.
+  const user = process.env.STAGING_USER?.trim();
+  const pass = process.env.STAGING_PASS?.trim();
 
   // No credentials configured (production / local) → do nothing.
   if (!user || !pass) return NextResponse.next();

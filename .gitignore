@@ -1,2 +1,5 @@
 Coming_Soon_page/.env
 Coming_Soon_page/test_kit.php
+
+# Deploy bundles (may contain .env.local secrets)
+*.zip
