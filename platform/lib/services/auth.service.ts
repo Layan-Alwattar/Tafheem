@@ -13,6 +13,11 @@ function siteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 }
 
+/** Where the "verify your email" link lands: the sign-in page of the frontend. */
+function signInUrl(): string {
+  return process.env.SIGNIN_URL || `${siteUrl()}/test/login.html`;
+}
+
 /**
  * Register a new user. Supabase Auth hashes the password (bcrypt) and sends the
  * verification email. The `handle_new_user` trigger creates the profile row
@@ -24,7 +29,7 @@ export async function registerUser(input: z.infer<typeof registerSchema>) {
     email: input.email,
     password: input.password,
     options: {
-      emailRedirectTo: `${siteUrl()}/test/login.html`,
+      emailRedirectTo: signInUrl(),
       data: {
         display_name: input.display_name,
         gender: input.gender,

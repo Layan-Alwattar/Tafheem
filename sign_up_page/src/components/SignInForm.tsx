@@ -1,5 +1,5 @@
 "use client";
-import { useState, SubmitEvent } from "react";
+import { useEffect, useState, SubmitEvent } from "react";
 import { inter, playfair } from "@/app/layout";
 import EmailInput from "./EmailInput";
 import FormError from "./FormError";
@@ -17,6 +17,34 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  // Arriving from the "verify your email" link: Supabase appends either a
+  // fresh session or an error to the URL fragment.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    window.history.replaceState(null, "", window.location.pathname);
+
+    const errorDescription = params.get("error_description");
+    if (errorDescription) {
+      setSubmitError(
+        `${errorDescription.replace(/\+/g, " ")}. Please sign in, or register again if the link expired.`,
+      );
+      return;
+    }
+
+    const access_token = params.get("access_token");
+    const refresh_token = params.get("refresh_token");
+    if (access_token && refresh_token) {
+      setNotice("Your email is verified. Taking you in…");
+      const hash = new URLSearchParams({
+        access_token,
+        refresh_token,
+        expires_at: params.get("expires_at") ?? "",
+      });
+      window.location.replace(`${READER_URL}/#${hash}`);
+    }
+  }, []);
 
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -70,6 +98,13 @@ export default function SignInForm() {
         <hr className="border-none h-px bg-[linear-gradient(to_right,#EAE1E1_0%,#DBBC47_95%,#DBBC47_100%)] mt-4 w-full opacity-50" />
       </div>
 
+      {notice && (
+        <p
+          className={`${inter.className} w-full border-[2px] border-[#3d7033] bg-[#3d7033]/5 px-2.5 py-1.5 text-[12px] text-[#3d7033] mb-6 mt-2`}
+        >
+          {notice}
+        </p>
+      )}
       {submitError && <FormError message={submitError} />}
 
       <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
