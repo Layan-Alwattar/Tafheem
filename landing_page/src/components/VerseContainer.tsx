@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AyahWord, type AyahWordData } from "./AyahWord";
-import { ReflectionNote, ReflectionNoteData } from "./ReflectionNote";
+import { ReflectionNote, ReflectionNoteData } from "./ReflectionNote_mine";
 
 interface VerseContainerProps {
   words: AyahWordData[];

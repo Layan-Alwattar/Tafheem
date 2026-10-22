@@ -1,4 +1,4 @@
-import { ReflectionNoteData } from "./ReflectionNote";
+import { ReflectionNoteData } from "./ReflectionNote_mine";
 
 export const defaultReflectionNote: ReflectionNoteData = {
   initialQuote: '"I used to read this thinking the ease only starts when the struggle ends completely..."',
