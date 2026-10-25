@@ -1,5 +1,4 @@
 "use client";
-import { log } from "console";
 
 // export default function NameInput() {
 //   const [displayName, setDisplayName] = useState("hi");
@@ -35,7 +34,7 @@ function InputTracker() {
   const [inputValue, setInputValue] = useState("");
 
   // 2. Create the onChange handler function
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // event.target.value grabs the current text from the input field
     setInputValue(event.target.value);
   };

@@ -14,6 +14,8 @@ export const registerSchema = z.object({
   country: z.string().trim().min(1, "Country is required").max(100),
   // Language indicator — drives the Kit (ConvertKit) tag on signup.
   language: z.enum(["en", "ar"]).default("en"),
+  // Optional — same limit as PATCH /profile/me.
+  bio: z.string().trim().max(500).optional(),
 });
 
 export const loginSchema = z.object({

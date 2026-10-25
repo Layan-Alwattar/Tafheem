@@ -11,6 +11,8 @@ interface VerseContainerProps {
   translation: string;
   initialSelectedId?: number;
   reflectionNote?: ReflectionNoteData;
+  /** When true, the reflection note loads from and saves to the backend. */
+  signedIn?: boolean;
 }
 
 export const VerseContainer: React.FC<VerseContainerProps> = ({
@@ -22,6 +24,7 @@ export const VerseContainer: React.FC<VerseContainerProps> = ({
   translation,
   initialSelectedId,
   reflectionNote,
+  signedIn = false,
 }) => {
   const [selectedId, setSelectedId] = useState<number>(
     () => initialSelectedId ?? words[0]?.id ?? 1,
@@ -136,7 +139,12 @@ export const VerseContainer: React.FC<VerseContainerProps> = ({
 
         {/* Right Card: Personal Reflection Journal (7/12 columns on desktop) */}
         <div className="lg:col-span-7">
-          <ReflectionNote note={reflectionNote} />
+          <ReflectionNote
+            note={reflectionNote}
+            surahNumber={surahNumber}
+            ayahNumber={ayahNumber}
+            signedIn={signedIn}
+          />
         </div>
       </div>
     </section>
