@@ -139,12 +139,7 @@ export const VerseContainer: React.FC<VerseContainerProps> = ({
 
         {/* Right Card: Personal Reflection Journal (7/12 columns on desktop) */}
         <div className="lg:col-span-7">
-          <ReflectionNote
-            note={reflectionNote}
-            surahNumber={surahNumber}
-            ayahNumber={ayahNumber}
-            signedIn={signedIn}
-          />
+          <ReflectionNote note={reflectionNote} />
         </div>
       </div>
     </section>
