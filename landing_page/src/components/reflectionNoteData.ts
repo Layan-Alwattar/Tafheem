@@ -1,5 +1,14 @@
-import { ReflectionNoteData } from "./ReflectionNote_mine";
+// import { ReflectionNoteData } from "./ReflectionNote_mine";
 
+export interface ReflectionNoteData {
+  initialQuote?: string;
+  initialContent: string;
+  lastEdited?: string;
+  isPrivate?: boolean;
+}
+interface ReflectionNoteProps {
+  note?: ReflectionNoteData;
+}
 export const defaultReflectionNote: ReflectionNoteData = {
   initialQuote: '"I used to read this thinking the ease only starts when the struggle ends completely..."',
   initialContent: 'Looking at the root today, it hit me that Allah placed "with" rather than "after". Even on the heaviest days this month, the small blessings—my child\'s smile, a moment of quiet prayer—were right there beside the weight. I am not waiting for life to get easy to find God; He is carrying the ease right now.',

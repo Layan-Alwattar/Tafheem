@@ -18,9 +18,8 @@ export const ReflectionNote: React.FC<ReflectionNoteProps> = ({ note }) => {
   const [content, setContent] = useState(note?.initialContent ?? "");
 
   const handleSave = () => {
-    // The current component stores edits in local state.
-    // Connect a save callback or backend to persist them.
     setIsEditing(false);
+    // Add persistence here if you want edits saved beyond this component.
   };
 
   return (
@@ -41,7 +40,7 @@ export const ReflectionNote: React.FC<ReflectionNoteProps> = ({ note }) => {
           </span>
         </div>
 
-        {/* Note Body: Display mode vs Edit mode */}
+        {/* Note Body */}
         {isEditing ? (
           <div className="space-y-3">
             <div>
@@ -52,7 +51,6 @@ export const ReflectionNote: React.FC<ReflectionNoteProps> = ({ note }) => {
                 type="text"
                 value={quote}
                 onChange={(e) => setQuote(e.target.value)}
-                placeholder="Write an opening thought..."
                 className="w-full p-2 bg-surface-container-lowest border border-outline-variant/50 rounded font-serif italic text-primary text-sm focus:outline-none focus:border-gold"
               />
             </div>
@@ -65,7 +63,6 @@ export const ReflectionNote: React.FC<ReflectionNoteProps> = ({ note }) => {
                 rows={5}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Write your reflection..."
                 className="w-full p-2 bg-surface-container-lowest border border-outline-variant/50 rounded font-serif text-on-surface text-sm focus:outline-none focus:border-gold"
               />
             </div>
@@ -73,17 +70,21 @@ export const ReflectionNote: React.FC<ReflectionNoteProps> = ({ note }) => {
         ) : (
           <div className="space-y-3 font-serif text-[15px] sm:text-base leading-relaxed text-on-surface">
             {quote && (
-              <p className="italic text-primary/80 font-medium">“{quote}”</p>
+              <p className="italic text-primary/80 font-medium">
+                {quote}
+              </p>
             )}
 
-            <p className="text-on-surface-variant text-[15px]">{content}</p>
+            <p className="text-on-surface-variant text-[15px]">
+              {content}
+            </p>
           </div>
         )}
       </div>
 
-      {/* Note Action Footer */}
+      {/* Note Footer */}
       <div className="mt-6 pt-3 border-t border-outline-variant/20 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2 text-xs font-sans text-outline">
+        <div className="flex items-center gap-2 text-xs font-sans text-outline">
           <button
             type="button"
             onClick={() => {
@@ -102,15 +103,11 @@ export const ReflectionNote: React.FC<ReflectionNoteProps> = ({ note }) => {
             <span>{isEditing ? "Save Note" : "Edit Note"}</span>
           </button>
 
-          {note?.lastEdited && (
-            <>
-              <span>·</span>
-              <span>{note.lastEdited}</span>
-            </>
-          )}
+          <span>·</span>
+          <span>{note?.lastEdited ?? ""}</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             className="px-3 py-1 text-xs font-sans font-medium rounded text-on-surface-variant hover:bg-surface-container transition-colors"
@@ -131,5 +128,4 @@ export const ReflectionNote: React.FC<ReflectionNoteProps> = ({ note }) => {
   );
 };
 
-// Support both named and default imports.
 export default ReflectionNote;
