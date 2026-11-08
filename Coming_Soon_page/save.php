@@ -1,4 +1,3 @@
-
 <?php
 function loadEnv($path) {
     if (!file_exists($path)) return;
@@ -16,6 +15,13 @@ loadEnv(__DIR__ . '/.env');
 
 header("Content-Type: application/json");
 
+// Send a JSON reply with a real HTTP status, then stop.
+function respond($status, $ok, $message) {
+    http_response_code($status);
+    echo json_encode(["ok" => $ok, "message" => $message]);
+    exit();
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -32,8 +38,7 @@ $db   = $_ENV['DB_NAME'];
 $conn = new mysqli($host, $user, $pass, $db);
 
 if ($conn->connect_error) {
-    echo json_encode(["message" => "Database connection failed"]);
-    exit();
+    respond(500, false, "Database connection failed");
 }
 
 // get JSON input
@@ -42,15 +47,12 @@ $data = json_decode(file_get_contents("php://input"), true);
 $lang = $data["lang"] ?? "en";
 /* anti-spam delay */
 sleep(1);
-$name = htmlspecialchars(trim($data["name"]));
-$email = trim($data["email"]);
-
-$name  = $conn->real_escape_string($data["name"]);
-$email = $conn->real_escape_string($data["email"]);
+// The insert below uses a prepared statement, so no manual escaping is needed.
+$name  = trim($data["name"] ?? "");
+$email = trim($data["email"] ?? "");
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    echo json_encode(["message" => "Invalid email"]);
-    exit();
+    respond(400, false, $lang === "ar" ? "البريد الإلكتروني غير صالح" : "Please enter a valid email address.");
 }
 
 // insert or update if exists (save to DB)
@@ -63,8 +65,7 @@ ON DUPLICATE KEY UPDATE name=VALUES(name)
 $stmt->bind_param("ss", $email, $name);
 
 if (!$stmt->execute()) {
-    echo json_encode(["message" => "Database save failed"]);
-    exit();
+    respond(500, false, "Database save failed");
 }
 
 $firstName = explode(" ", $name)[0];
@@ -230,7 +231,7 @@ if ($lang === "ar") {
 }
 
 $htmlBody = file_get_contents($templateFile);
-$htmlBody = str_replace('{{NAME}}', $firstName, $htmlBody);
+$htmlBody = str_replace('{{NAME}}', htmlspecialchars($firstName, ENT_QUOTES, 'UTF-8'), $htmlBody);
 
 $mail = new PHPMailer(true);
 $mail->CharSet = 'UTF-8';
@@ -250,12 +251,12 @@ try {
 $mail->isHTML(true);
 $mail->Subject = $subject;
 $mail->Body    = $htmlBody;
-$mail->AltBody = strip_tags($message); // Plain text version for old clients
+$mail->AltBody = strip_tags($htmlBody); // Plain text version for old clients
 
 $mail->send();
 }catch (Exception $e) {
-    echo json_encode(["message" => "Mailer Error: " . $mail->ErrorInfo]);
-    exit();
+    error_log("Waitlist mailer error: " . $mail->ErrorInfo);
+    respond(500, false, "We couldn't send your welcome email. Please try again.");
 }
 if ($lang === "ar") {
     $responseMsg = "تم تسجيلك في قائمة الانتظار! تحقق من بريدك الإلكتروني 📩";
@@ -263,6 +264,6 @@ if ($lang === "ar") {
     $responseMsg = "You're on the waitlist! Check your email 📩";
 }
 
-echo json_encode(["message" => $responseMsg]);
+echo json_encode(["ok" => true, "message" => $responseMsg]);
 $conn->close();
 ?>
