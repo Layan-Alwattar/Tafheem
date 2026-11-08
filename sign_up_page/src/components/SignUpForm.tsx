@@ -54,7 +54,7 @@ export default function SignUpForm() {
 
     // Field names match the backend's registerSchema.
     const payload = {
-      display_name: get("displayName"),
+      displayName: get("displayName"),
       email: get("email"),
       password: String(formData.get("password") ?? ""),
       gender: get("gender"),
@@ -87,8 +87,10 @@ export default function SignUpForm() {
           className={`text-[#3a3030] ${inter.className} text-sm mt-6 leading-relaxed`}
         >
           We sent a verification link to{" "}
-          <span className="font-semibold text-[#70334c]">{registeredEmail}</span>.
-          Open it to activate your account, then sign in.
+          <span className="font-semibold text-[#70334c]">
+            {registeredEmail}
+          </span>
+          . Open it to activate your account, then sign in.
         </p>
         <a
           href="/signin"

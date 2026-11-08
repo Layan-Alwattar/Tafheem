@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import type { WaitlistPayload } from "../types";
 import Icon from "./Icon";
 

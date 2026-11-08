@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@plugin '@tailwindcss/forms';
+
+/* Design tokens (Tailwind v4: configured in CSS, no tailwind.config.js) */
+@theme inline {
+  --color-primary: #703346;
+  --color-brand-maroon: #703346;
+  --color-brand-maroon-dark: #5a2737;
+  --color-brand-gold: #dbbc47;
+  --color-brand-gold-dark: #8a7122;
+  --color-brand-cream: #fefcf7;
+  --color-brand-parchment: #f7f4e7;
+  --color-on-surface: #1c1c14;
+  --color-on-surface-variant: #514347;
+  --color-outline: #847377;
+  --color-outline-variant: #e5dec9;
+  --color-error: #ba1a1a;
+
+  --font-headline-md: var(--font-playfair), serif;
+  --font-headline-sm: var(--font-playfair), serif;
+  --font-display-lg: var(--font-playfair), serif;
+  --font-body-md: var(--font-inter), sans-serif;
+  --font-arabic-display: var(--font-amiri), serif;
+  --font-serif-text: var(--font-source-serif), serif;
+
+  --shadow-gold-sm: 0 2px 8px rgba(219, 188, 71, 0.06);
+  --shadow-gold-md: 0 2px 12px rgba(219, 188, 71, 0.12);
+  --shadow-gold-hover: 0 4px 16px rgba(219, 188, 71, 0.14);
+  --shadow-header: 0 2px 14px rgba(112, 51, 70, 0.04);
+  --shadow-menu: 0 4px 20px rgba(112, 51, 70, 0.12);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background-color: var(--color-brand-parchment);
+}
